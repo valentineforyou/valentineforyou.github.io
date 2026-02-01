@@ -9,7 +9,6 @@
         :root {
             --soft-pink: #ffdae0;
             --deep-pink: #ff4d6d;
-            --cream: #fff5f6;
             --glow: rgba(255, 182, 193, 0.6);
         }
 
@@ -20,66 +19,56 @@
             background: radial-gradient(circle, #fff5f6 0%, #ffdae0 100%);
             font-family: 'Quicksand', sans-serif;
             overflow: hidden;
+            touch-action: none;
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 2px solid white;
             border-radius: 40px;
-            padding: 2rem 1rem;
+            padding: 2rem;
             box-shadow: 0 20px 45px var(--glow);
             text-align: center;
-            width: 92%;
+            width: 90%;
             max-width: 400px; 
             min-height: 480px;
-            z-index: 10;
-            position: relative;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            position: relative;
         }
 
-        .teddy-container {
-            font-size: 6rem;
-            margin-bottom: 10px;
-            animation: shySway 3s ease-in-out infinite;
-        }
-
-        @keyframes shySway {
-            0%, 100% { transform: rotate(-3deg); }
-            50% { transform: rotate(3deg) scale(1.05); }
-        }
+        .teddy-container { font-size: 6rem; margin-bottom: 10px; animation: shySway 3s infinite; }
+        @keyframes shySway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg) scale(1.05); } }
 
         h1 {
             font-family: 'Dancing Script', cursive;
             color: var(--deep-pink);
             font-size: 2.3rem;
-            margin: 10px 0 30px 0;
+            margin: 10px 0 40px 0;
         }
 
-        /* Movement area for the No button */
         .interaction-box {
             position: relative;
             width: 100%;
-            height: 180px; 
+            height: 200px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         button {
-            padding: 12px 32px;
-            font-size: 1.1rem;
+            padding: 12px 35px;
+            font-size: 1.2rem;
             font-weight: 700;
             border-radius: 50px;
             border: none;
             cursor: pointer;
-            position: absolute; /* Allows for overlapping check */
-            transition: all 0.15s ease-out;
-            touch-action: none; /* Crucial for mobile performance */
+            position: absolute;
+            transition: all 0.1s ease-out;
         }
 
         #yesBtn {
@@ -87,8 +76,7 @@
             color: white;
             box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
             z-index: 20;
-            /* Start slightly to the left of center */
-            transform: translateX(-55%); 
+            transform: translateX(-60px); /* Closer to center */
         }
 
         #noBtn {
@@ -96,30 +84,14 @@
             color: var(--deep-pink);
             border: 2px solid var(--deep-pink);
             z-index: 30;
-            /* Start slightly to the right of center - very close to Yes */
-            transform: translateX(55%);
+            transform: translateX(60px); /* Closer to center */
         }
 
-        .success-content {
-            display: none;
-            animation: popIn 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
+        .success-content { display: none; animation: popIn 0.8s forwards; }
+        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 
-        @keyframes popIn {
-            0% { transform: scale(0); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        .falling-heart {
-            position: absolute;
-            pointer-events: none;
-            z-index: 5;
-            animation: fall 3s linear forwards;
-        }
-
-        @keyframes fall {
-            to { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-        }
+        .falling-heart { position: absolute; pointer-events: none; animation: fall 3s linear forwards; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
     </style>
 </head>
 <body>
@@ -149,47 +121,61 @@
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
         const box = document.getElementById('box');
+        
+        // Detection radius (higher = harder to catch)
+        const radius = 80; 
 
-        function moveButton(e) {
-            if (e) e.preventDefault();
-
-            const boxWidth = box.offsetWidth;
-            const boxHeight = box.offsetHeight;
-            
-            // Get current Yes button position
-            const yesRect = yesBtn.getBoundingClientRect();
+        function moveNoButton() {
             const boxRect = box.getBoundingClientRect();
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
 
             let newX, newY;
-            let overlap = true;
+            let tooCloseToYes = true;
 
-            // Loop until we find a position that doesn't overlap Yes
-            while (overlap) {
-                newX = Math.random() * (boxWidth - noBtn.offsetWidth);
-                newY = Math.random() * (boxHeight - noBtn.offsetHeight);
+            while (tooCloseToYes) {
+                newX = Math.random() * (boxRect.width - btnWidth);
+                newY = Math.random() * (boxRect.height - btnHeight);
 
-                // Check distance from Yes button center to prevent overlap
-                const yesCenterX = yesBtn.offsetLeft + (yesBtn.offsetWidth / 2);
-                const yesCenterY = yesBtn.offsetTop + (yesBtn.offsetHeight / 2);
-                const noCenterX = newX + (noBtn.offsetWidth / 2);
-                const noCenterY = newY + (noBtn.offsetHeight / 2);
-
-                const distance = Math.hypot(yesCenterX - noCenterX, yesCenterY - noCenterY);
+                // Calculate distance from Yes Button
+                const yesX = yesBtn.offsetLeft;
+                const yesY = yesBtn.offsetTop;
+                const dist = Math.hypot(newX - yesX, newY - yesY);
                 
-                // If distance is enough, exit loop
-                if (distance > 100) overlap = false;
+                if (dist > 120) tooCloseToYes = false;
             }
 
-            noBtn.style.transform = 'none'; // Clear initial CSS transform
+            noBtn.style.transform = 'none';
             noBtn.style.left = newX + 'px';
             noBtn.style.top = newY + 'px';
         }
 
-        // Hover for Laptop
-        noBtn.addEventListener('mouseover', moveButton);
-        
-        // Touch for Mobile
-        noBtn.addEventListener('touchstart', moveButton);
+        // Mouse detection (Laptop)
+        document.addEventListener('mousemove', (e) => {
+            const btnRect = noBtn.getBoundingClientRect();
+            const btnCenterX = btnRect.left + btnRect.width / 2;
+            const btnCenterY = btnRect.top + btnRect.height / 2;
+
+            const distance = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
+
+            if (distance < radius) {
+                moveNoButton();
+            }
+        });
+
+        // Touch detection (Mobile)
+        document.addEventListener('touchstart', (e) => {
+            const touch = e.touches[0];
+            const btnRect = noBtn.getBoundingClientRect();
+            const btnCenterX = btnRect.left + btnRect.width / 2;
+            const btnCenterY = btnRect.top + btnRect.height / 2;
+
+            const distance = Math.hypot(touch.clientX - btnCenterX, touch.clientY - btnCenterY);
+
+            if (distance < radius + 20) { // Slightly larger radius for fingers
+                moveNoButton();
+            }
+        });
 
         function celebrate() {
             document.getElementById('ask-ui').style.display = 'none';
@@ -205,13 +191,12 @@
             for(let i=0; i<40; i++) {
                 const heart = document.createElement('div');
                 heart.className = 'falling-heart';
-                heart.innerHTML = ['💖', '💗', '🌹', '✨', '🧸'][Math.floor(Math.random() * 5)];
+                heart.innerHTML = '💖';
                 heart.style.left = Math.random() * 100 + 'vw';
                 heart.style.top = '-20px';
                 heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
                 heart.style.animationDuration = (Math.random() * 2 + 2) + 's';
                 document.body.appendChild(heart);
-                setTimeout(() => heart.remove(), 3000);
             }
         }
     </script>
