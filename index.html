@@ -12,6 +12,10 @@
             --glow: rgba(255, 182, 193, 0.6);
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body, html {
             margin: 0; padding: 0;
             width: 100%; height: 100vh;
@@ -27,13 +31,13 @@
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 2px solid white;
-            border-radius: 40px;
-            padding: 2rem;
-            box-shadow: 0 20px 45px var(--glow);
+            border-radius: 2.5rem;
+            padding: 2rem 1.5rem;
+            box-shadow: 0 1.25rem 2.8rem var(--glow);
             text-align: center;
-            width: 90%;
-            max-width: 400px; 
-            min-height: 480px;
+            width: 92%;
+            max-width: 450px; 
+            min-height: 70vh; /* Scaled to screen height */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -41,42 +45,52 @@
             position: relative;
         }
 
-        .teddy-container { font-size: 6rem; margin-bottom: 10px; animation: shySway 3s infinite; }
-        @keyframes shySway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg) scale(1.05); } }
+        .teddy-container { 
+            font-size: clamp(4rem, 15vw, 6rem); 
+            margin-bottom: 1rem; 
+            animation: shySway 3s infinite; 
+        }
+
+        @keyframes shySway { 
+            0%, 100% { transform: rotate(-3deg); } 
+            50% { transform: rotate(3deg) scale(1.05); } 
+        }
 
         h1 {
             font-family: 'Dancing Script', cursive;
             color: var(--deep-pink);
-            font-size: 2.3rem;
-            margin: 10px 0 40px 0;
+            font-size: clamp(1.8rem, 8vw, 2.5rem);
+            margin: 0.5rem 0 2rem 0;
+            line-height: 1.2;
         }
 
         .interaction-box {
             position: relative;
             width: 100%;
-            height: 200px;
+            height: 25vh; /* Responsive height for the movement area */
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         button {
-            padding: 12px 35px;
-            font-size: 1.2rem;
+            padding: 0.8rem 2.2rem;
+            font-size: clamp(1rem, 4vw, 1.2rem);
             font-weight: 700;
-            border-radius: 50px;
+            border-radius: 3rem;
             border: none;
             cursor: pointer;
             position: absolute;
             transition: all 0.1s ease-out;
+            white-space: nowrap;
         }
 
         #yesBtn {
             background: var(--deep-pink);
             color: white;
-            box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
+            box-shadow: 0 0.5rem 1.2rem rgba(255, 77, 109, 0.4);
             z-index: 20;
-            transform: translateX(-60px); /* Closer to center */
+            transform: translateX(-4.5rem); /* Responsive spacing */
         }
 
         #noBtn {
@@ -84,14 +98,35 @@
             color: var(--deep-pink);
             border: 2px solid var(--deep-pink);
             z-index: 30;
-            transform: translateX(60px); /* Closer to center */
+            transform: translateX(4.5rem); /* Responsive spacing */
         }
 
-        .success-content { display: none; animation: popIn 0.8s forwards; }
-        @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .success-content { 
+            display: none; 
+            animation: popIn 0.8s forwards; 
+        }
 
-        .falling-heart { position: absolute; pointer-events: none; animation: fall 3s linear forwards; }
-        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); opacity: 0; } }
+        @keyframes popIn { 
+            0% { transform: scale(0); opacity: 0; } 
+            100% { transform: scale(1); opacity: 1; } 
+        }
+
+        .falling-heart { 
+            position: absolute; 
+            pointer-events: none; 
+            animation: fall 3s linear forwards; 
+        }
+
+        @keyframes fall { 
+            to { transform: translateY(110vh) rotate(360deg); opacity: 0; } 
+        }
+
+        /* Mobile specific adjustments */
+        @media (max-width: 400px) {
+            #yesBtn { transform: translateX(-3.5rem); }
+            #noBtn { transform: translateX(3.5rem); }
+            .glass-card { padding: 1.5rem 1rem; }
+        }
     </style>
 </head>
 <body>
@@ -109,7 +144,7 @@
         <div id="success-ui" class="success-content">
             <div style="font-size: 5rem;">❤️🧸🎀</div>
             <h1>Yay! Best Day Ever!</h1>
-            <p style="color: #ff4d6d; font-weight: 700;">I'm the luckiest person, Pari! 💖</p>
+            <p style="color: #ff4d6d; font-weight: 700; font-size: 1.2rem;">I'm the luckiest person, Pari! 💖</p>
         </div>
     </div>
 
@@ -122,8 +157,8 @@
         const yesBtn = document.getElementById('yesBtn');
         const box = document.getElementById('box');
         
-        // Detection radius (higher = harder to catch)
-        const radius = 80; 
+        // Detection radius scales slightly with screen size
+        const radius = window.innerWidth < 600 ? 70 : 90; 
 
         function moveNoButton() {
             const boxRect = box.getBoundingClientRect();
@@ -133,16 +168,16 @@
             let newX, newY;
             let tooCloseToYes = true;
 
+            // Maintain your logic for jumping without hitting Yes
             while (tooCloseToYes) {
                 newX = Math.random() * (boxRect.width - btnWidth);
                 newY = Math.random() * (boxRect.height - btnHeight);
 
-                // Calculate distance from Yes Button
                 const yesX = yesBtn.offsetLeft;
                 const yesY = yesBtn.offsetTop;
                 const dist = Math.hypot(newX - yesX, newY - yesY);
                 
-                if (dist > 120) tooCloseToYes = false;
+                if (dist > 100) tooCloseToYes = false;
             }
 
             noBtn.style.transform = 'none';
@@ -150,12 +185,11 @@
             noBtn.style.top = newY + 'px';
         }
 
-        // Mouse detection (Laptop)
+        // Logic for mouse proximity
         document.addEventListener('mousemove', (e) => {
             const btnRect = noBtn.getBoundingClientRect();
             const btnCenterX = btnRect.left + btnRect.width / 2;
             const btnCenterY = btnRect.top + btnRect.height / 2;
-
             const distance = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
 
             if (distance < radius) {
@@ -163,16 +197,15 @@
             }
         });
 
-        // Touch detection (Mobile)
+        // Logic for touch proximity
         document.addEventListener('touchstart', (e) => {
             const touch = e.touches[0];
             const btnRect = noBtn.getBoundingClientRect();
             const btnCenterX = btnRect.left + btnRect.width / 2;
             const btnCenterY = btnRect.top + btnRect.height / 2;
-
             const distance = Math.hypot(touch.clientX - btnCenterX, touch.clientY - btnCenterY);
 
-            if (distance < radius + 20) { // Slightly larger radius for fingers
+            if (distance < radius + 10) {
                 moveNoButton();
             }
         });
