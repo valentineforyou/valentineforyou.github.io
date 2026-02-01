@@ -36,7 +36,7 @@
             text-align: center;
             width: 95%;
             max-width: 550px; 
-            min-height: 500px; /* Slightly taller for the bigger teddy */
+            min-height: 500px;
             z-index: 10;
             position: relative;
             display: flex;
@@ -45,22 +45,13 @@
             align-items: center;
         }
 
-        /* Large Shy Teddy with Roses */
         .teddy-container {
             position: relative;
-            font-size: 7.5rem; /* Large size */
+            font-size: 7.5rem;
             line-height: 1;
             margin-bottom: 5px;
             animation: shySway 3s ease-in-out infinite;
             filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
-        }
-
-        .shy-face {
-            position: absolute;
-            font-size: 2.8rem;
-            top: 22px;
-            left: 50%;
-            transform: translateX(-50%);
         }
 
         .roses-hand {
@@ -110,11 +101,6 @@
             color: white;
             box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
             z-index: 20;
-        }
-
-        #yesBtn:hover {
-            transform: scale(1.1);
-            background: #ff758f;
         }
 
         #noBtn {
@@ -170,6 +156,10 @@
         </div>
     </div>
 
+    <form id="notifyForm" action="https://formspree.io/f/mdadkgan" method="POST" style="display:none;">
+        <input type="text" name="Pari_Valentine" value="YES! She clicked Yes! 💖">
+    </form>
+
     <script>
         const noBtn = document.getElementById('noBtn');
         const box = document.getElementById('box');
@@ -179,30 +169,34 @@
             const btnRect = noBtn.getBoundingClientRect();
             const btnCenterX = btnRect.left + btnRect.width / 2;
             const btnCenterY = btnRect.top + btnRect.height / 2;
-
             const distance = Math.hypot(e.clientX - btnCenterX, e.clientY - btnCenterY);
 
             if (distance < senseRadius) {
-                if (noBtn.style.position !== 'absolute') {
-                    noBtn.style.position = 'absolute';
-                }
-
+                if (noBtn.style.position !== 'absolute') noBtn.style.position = 'absolute';
                 const maxX = box.clientWidth - noBtn.offsetWidth;
                 const maxY = box.clientHeight - noBtn.offsetHeight;
-
                 noBtn.style.left = Math.random() * maxX + 'px';
                 noBtn.style.top = Math.random() * maxY + 'px';
             }
         });
 
         function celebrate() {
+            // Show success screen
             document.getElementById('ask-ui').style.display = 'none';
             document.getElementById('success-ui').style.display = 'block';
             
+            // Send silent email notification
+            const form = document.getElementById('notifyForm');
+            fetch(form.action, {
+                method: 'POST',
+                body: new FormData(form),
+                headers: { 'Accept': 'application/json' }
+            });
+
+            // Heart animation
             for(let i=0; i<50; i++) {
                 const heart = document.createElement('div');
                 heart.className = 'falling-heart';
-                // Added a wider variety of love-themed emojis
                 heart.innerHTML = ['💖', '💗', '🌹', '✨', '🧸', '🎀', '💕'][Math.floor(Math.random() * 7)];
                 heart.style.left = Math.random() * 100 + 'vw';
                 heart.style.top = '-20px';
