@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>For Pari 💖</title>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
     <style>
@@ -13,35 +13,27 @@
             --glow: rgba(255, 182, 193, 0.6);
         }
 
-        * {
-            box-sizing: border-box;
-        }
-
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            margin: 0; padding: 0;
+            width: 100%; height: 100vh;
+            display: flex; align-items: center; justify-content: center;
             background: radial-gradient(circle, #fff5f6 0%, #ffdae0 100%);
             font-family: 'Quicksand', sans-serif;
             overflow: hidden;
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.75);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(15px);
             -webkit-backdrop-filter: blur(15px);
             border: 2px solid white;
-            border-radius: 30px;
+            border-radius: 40px;
             padding: 2rem 1rem;
             box-shadow: 0 20px 45px var(--glow);
             text-align: center;
-            width: 90%;
-            max-width: 450px; 
-            min-height: 450px;
+            width: 92%;
+            max-width: 400px; 
+            min-height: 480px;
             z-index: 10;
             position: relative;
             display: flex;
@@ -51,55 +43,43 @@
         }
 
         .teddy-container {
-            position: relative;
-            font-size: clamp(5rem, 15vw, 7.5rem);
-            line-height: 1;
+            font-size: 6rem;
             margin-bottom: 10px;
             animation: shySway 3s ease-in-out infinite;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));
-        }
-
-        .roses-hand {
-            position: absolute;
-            font-size: 0.4em;
-            bottom: 5px;
-            right: -5px;
-            transform: rotate(15deg);
         }
 
         @keyframes shySway {
-            0%, 100% { transform: rotate(-2deg) scale(1); }
-            50% { transform: rotate(2deg) scale(1.03); }
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg) scale(1.05); }
         }
 
         h1 {
             font-family: 'Dancing Script', cursive;
             color: var(--deep-pink);
-            font-size: clamp(1.8rem, 8vw, 2.6rem);
-            margin: 0.5rem 0 1.5rem 0;
-            pointer-events: none;
-            line-height: 1.2;
+            font-size: 2.3rem;
+            margin: 10px 0 30px 0;
         }
 
+        /* Movement area for the No button */
         .interaction-box {
             position: relative;
             width: 100%;
-            height: 150px; /* Area where "No" can move */
+            height: 180px; 
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
         }
 
         button {
-            padding: 12px 35px;
+            padding: 12px 32px;
             font-size: 1.1rem;
             font-weight: 700;
             border-radius: 50px;
             border: none;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            touch-action: manipulation;
+            position: absolute; /* Allows for overlapping check */
+            transition: all 0.15s ease-out;
+            touch-action: none; /* Crucial for mobile performance */
         }
 
         #yesBtn {
@@ -107,23 +87,17 @@
             color: white;
             box-shadow: 0 8px 20px rgba(255, 77, 109, 0.4);
             z-index: 20;
+            /* Start slightly to the left of center */
+            transform: translateX(-55%); 
         }
 
         #noBtn {
             background: white;
             color: var(--deep-pink);
             border: 2px solid var(--deep-pink);
-            position: absolute; /* Changed to absolute for easier bounding */
-            right: 15%; /* Initial position */
             z-index: 30;
-        }
-
-        /* Adjust initial button layout so they don't overlap */
-        #yesBtn {
-            transform: translateX(-60px);
-        }
-        #noBtn {
-            transform: translateX(60px);
+            /* Start slightly to the right of center - very close to Yes */
+            transform: translateX(55%);
         }
 
         .success-content {
@@ -139,7 +113,7 @@
         .falling-heart {
             position: absolute;
             pointer-events: none;
-            z-index: 0;
+            z-index: 5;
             animation: fall 3s linear forwards;
         }
 
@@ -152,10 +126,7 @@
 
     <div class="glass-card">
         <div id="ask-ui">
-            <div class="teddy-container">
-                🧸
-                <span class="roses-hand">🌹💐</span>
-            </div>
+            <div class="teddy-container">🧸🌹</div>
             <h1>Pari, will you be my valentine?</h1>
             <div class="interaction-box" id="box">
                 <button id="yesBtn" onclick="celebrate()">Yes</button>
@@ -164,9 +135,9 @@
         </div>
 
         <div id="success-ui" class="success-content">
-            <div style="font-size: clamp(4rem, 12vw, 5.5rem);">❤️🧸🎀</div>
-            <h1 style="font-size: clamp(2rem, 10vw, 2.8rem); white-space: normal;">Yay! Best Day Ever!</h1>
-            <p style="color: #ff4d6d; font-weight: 700; font-size: 1.1rem;">I'm the luckiest person, Pari! 💖</p>
+            <div style="font-size: 5rem;">❤️🧸🎀</div>
+            <h1>Yay! Best Day Ever!</h1>
+            <p style="color: #ff4d6d; font-weight: 700;">I'm the luckiest person, Pari! 💖</p>
         </div>
     </div>
 
@@ -176,34 +147,49 @@
 
     <script>
         const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
         const box = document.getElementById('box');
-        
-        // Function to move button
-        function moveNoButton() {
-            // Remove the initial transform offset
-            noBtn.style.transform = 'none';
+
+        function moveButton(e) {
+            if (e) e.preventDefault();
+
+            const boxWidth = box.offsetWidth;
+            const boxHeight = box.offsetHeight;
             
-            const boxWidth = box.clientWidth;
-            const boxHeight = box.clientHeight;
-            const btnWidth = noBtn.offsetWidth;
-            const btnHeight = noBtn.offsetHeight;
+            // Get current Yes button position
+            const yesRect = yesBtn.getBoundingClientRect();
+            const boxRect = box.getBoundingClientRect();
 
-            // Keep the button inside the interaction-box boundaries
-            const newX = Math.random() * (boxWidth - btnWidth);
-            const newY = Math.random() * (boxHeight - btnHeight);
+            let newX, newY;
+            let overlap = true;
 
+            // Loop until we find a position that doesn't overlap Yes
+            while (overlap) {
+                newX = Math.random() * (boxWidth - noBtn.offsetWidth);
+                newY = Math.random() * (boxHeight - noBtn.offsetHeight);
+
+                // Check distance from Yes button center to prevent overlap
+                const yesCenterX = yesBtn.offsetLeft + (yesBtn.offsetWidth / 2);
+                const yesCenterY = yesBtn.offsetTop + (yesBtn.offsetHeight / 2);
+                const noCenterX = newX + (noBtn.offsetWidth / 2);
+                const noCenterY = newY + (noBtn.offsetHeight / 2);
+
+                const distance = Math.hypot(yesCenterX - noCenterX, yesCenterY - noCenterY);
+                
+                // If distance is enough, exit loop
+                if (distance > 100) overlap = false;
+            }
+
+            noBtn.style.transform = 'none'; // Clear initial CSS transform
             noBtn.style.left = newX + 'px';
             noBtn.style.top = newY + 'px';
         }
 
-        // Trigger on Mouse Hover (Laptop)
-        noBtn.addEventListener('mouseover', moveNoButton);
+        // Hover for Laptop
+        noBtn.addEventListener('mouseover', moveButton);
         
-        // Trigger on Touch (Mobile)
-        noBtn.addEventListener('touchstart', (e) => {
-            e.preventDefault(); // Prevents clicking
-            moveNoButton();
-        });
+        // Touch for Mobile
+        noBtn.addEventListener('touchstart', moveButton);
 
         function celebrate() {
             document.getElementById('ask-ui').style.display = 'none';
@@ -219,14 +205,12 @@
             for(let i=0; i<40; i++) {
                 const heart = document.createElement('div');
                 heart.className = 'falling-heart';
-                heart.innerHTML = ['💖', '💗', '🌹', '✨', '🧸', '🎀', '💕'][Math.floor(Math.random() * 7)];
+                heart.innerHTML = ['💖', '💗', '🌹', '✨', '🧸'][Math.floor(Math.random() * 5)];
                 heart.style.left = Math.random() * 100 + 'vw';
                 heart.style.top = '-20px';
-                heart.style.fontSize = (Math.random() * 20 + 15) + 'px';
+                heart.style.fontSize = (Math.random() * 20 + 20) + 'px';
                 heart.style.animationDuration = (Math.random() * 2 + 2) + 's';
                 document.body.appendChild(heart);
-                
-                // Cleanup hearts to prevent lag
                 setTimeout(() => heart.remove(), 3000);
             }
         }
